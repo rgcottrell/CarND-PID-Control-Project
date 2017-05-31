@@ -33,9 +33,12 @@ int main()
   uWS::Hub h;
 
   PID pid;
-  // TODO: Initialize the pid variable.
-    pid.Init(0, 0, 0);
-  //pid.Init(32.9674, 33.5903, 6.8315);
+  
+  // Initialize the pid controller.
+  pid.Init(4.50506, 0.0, 2*0.415415);
+  
+  // Uncomment to enable twiddle with initial delta values.
+  //pid.InitTwiddle(1.0, 0.01, 0.1);
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -60,16 +63,16 @@ int main()
           */
           pid.UpdateError(cte);
           double steer_value = pid.TotalError();
-          double throttle_value = 0.1;
+          double throttle_value = 0.3;
           
           // DEBUG
-          std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
+          //std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
           msgJson["throttle"] = throttle_value;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-          std::cout << msg << std::endl;
+          //std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }
       } else {

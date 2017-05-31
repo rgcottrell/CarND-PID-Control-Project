@@ -35,6 +35,11 @@ public:
   void Init(double Kp, double Ki, double Kd);
   
   /**
+   * Initialize Twiddle and enable experimentation.
+   */
+  void InitTwiddle(double Kpd, double Kid, double Kdd);
+  
+  /**
    * Reset state when connection is established.
    */
   void OnConnection();
@@ -55,7 +60,8 @@ private:
   double int_cte_;
   
   enum class twiddle_state {
-    start,
+    start_high,
+    start_low,
     eval_high,
     eval_low
   };
@@ -64,10 +70,13 @@ private:
   int twiddle_index_;
   double twiddle_p_[3];
   double twiddle_dp_[3];
-  double twiddle_error_;
-  double best_error_;
+  double twiddle_best_err_;
+  double twiddle_curr_err_;
+  int twiddle_step_;
+  bool twiddle_enabled_;
   
-  void Twiddle(double cte);
+  void TwiddleStart();
+  void TwiddleFinish();
 };
 
 #endif /* PID_H */
